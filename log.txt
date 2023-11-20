@@ -1,0 +1,1627 @@
+----------------------------------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------------------------------
+--------------------------------------------|Terminal|----------------------------------------------------
+---------------------------------------------------------------------------------------------------------------
+
+CODE >>
+#include<stdio.h>
+#include<stdlib.h>
+
+void sort(int arr[], int size) {
+    int choice;
+
+    do {
+        printf("\n1. Ascending");
+        printf("\n2. Descending");
+        printf("\nEnter your choice (0 to exit): ");
+        scanf("%d", &choice);
+
+        switch (choice) {
+            case 1:
+                for (int i = 0; i < size - 1; i++) {
+                    for (int j = 0; j < size - 1 - i; j++) {
+                        if (arr[j] > arr[j + 1]) {
+                            int temp = arr[j];
+                            arr[j] = arr[j + 1];
+                            arr[j + 1] = temp;
+                        }
+                    }
+                }
+                printf("\nAfter sorting (Ascending): ");
+                for (int i = 0; i < size; i++) {
+                    printf("%d ", arr[i]);
+                }
+                printf("\n");
+                break;
+
+            case 2:
+                for (int i = 0; i < size - 1; i++) {
+                    for (int j = 0; j < size - 1 - i; j++) {
+                        if (arr[j] < arr[j + 1]) {
+                            int temp = arr[j];
+                            arr[j] = arr[j + 1];
+                            arr[j + 1] = temp;
+                        }
+                    }
+                }
+                printf("\nAfter sorting (Descending): ");
+                for (int i = 0; i < size; i++) {
+                    printf("%d ", arr[i]);
+                }
+                printf("\n");
+                break;
+
+            case 0:
+                printf("Exiting...\n");
+                break;
+
+            default:
+                printf("\nEnter a valid option...\n");
+                break;
+        }
+    } while (choice != 0);
+}
+
+int bin(int arr[], int size, int start, int end, int key) {
+    if (start <= end) {
+        int mid = (start + end) / 2;
+
+        if (arr[mid] == key) {
+            return mid;
+        } else if (arr[mid] > key) {
+            return bin(arr, size, start, (mid - 1), key);
+        } else if (arr[mid] < key) {
+            return bin(arr, size, (mid + 1), end, key);
+        }
+    }
+
+    return -1;
+}
+
+int main(int argc, char *argv[]) {
+    int size = argc - 1;
+    int arr[size];
+    int sum = 0;
+		
+    for (int i = 1; i < argc; i++) {
+        arr[i - 1] = atoi(argv[i]);
+        sum = sum + arr[i - 1];
+    }
+		
+		sort(arr, size);
+		
+    int key;
+    printf("\nEnter element to search: ");
+    scanf("%d", &key);
+
+    int result = bin(arr, size, 0, size - 1, key);
+
+    if (result == -1) {
+        printf("Element not found :( \n");
+    } else {
+        printf("Element found at index %d\n", result);
+    }
+
+    printf("Sum : %d\n", sum);
+
+    return 0;
+}
+/*
+------------- output ------------
+
+aman@aman-Latitude-E5470:~$ gcc search.c -o search.out
+aman@aman-Latitude-E5470:~$ ./search.out 5 1 4 2 3
+
+1. Ascending
+2. Descending
+Enter your choice (0 to exit): 2
+
+After sorting (Descending): 5 4 3 2 1 
+
+1. Ascending
+2. Descending
+Enter your choice (0 to exit): 1
+
+After sorting (Ascending): 1 2 3 4 5 
+
+1. Ascending
+2. Descending
+Enter your choice (0 to exit): 0
+Exiting...
+
+Enter element to search: 2
+Element found at index 1
+Sum : 15
+
+
+*/
+
+----------------------------------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------------------------------
+--------------------------------------------|Addressbook|----------------------------------------------------
+---------------------------------------------------------------------------------------------------------------
+
+#!/bin/sh
+
+create(){
+	read -p "--> Enter book name : " ab
+	if [ -f "$ab.txt" ]; then
+		echo "--> Book already exist.."
+	else
+		touch "$ab.txt"
+		echo "--> Book create by name '$ab'"
+	fi
+}
+
+insert(){
+	read -p "--> Enter book name : " ab
+	if [ -f "$ab.txt" ]; then
+		read -p "--> Enter phonenumber : " phone
+			if grep -q "$phone" "$ab.txt"; then
+				 echo "--> Contac already exist"
+			else
+				read -p "--> Enter your name : " name
+				read -p "--> Enter your address : " address
+				echo " " >> "$ab.txt"
+				echo "[Name : $name | Phone : $phone | Address : $address]" >> "$ab.txt"
+				echo " "
+				echo "'Contac inserted'"
+			fi
+	else
+		echo "--> Book not found.."
+	fi		
+}
+
+modify(){
+	read -p "--> Enter book name : " ab
+	if [ -f "$ab.txt" ];then
+		read -p "--> Enter phonenumber : " phone
+			if grep -q $phone "$ab.txt"; then
+				read -p "--> Enter new-name : " new_name
+				read -p "--> Enter new-phonenumber : " new_phone
+				read -p "--> Enter new-address : " new_address
+				sed -i "/$phone/c [Name : $new_name | Phone : $new_phone | Address : $new_address]" "$ab.txt"
+				echo " "
+				echo "Contac modified"
+			else
+				echo "--> Contac not found"
+			fi
+	else
+		echo "--> Book not found.."
+	fi
+}
+
+delete(){
+	read -p "--> Enter book name : " ab
+	if [ -f "$ab.txt" ];then
+		read -p "--> Enter phonenumber : " phone
+			if grep -q $phone "$ab.txt"; then
+				sed -i "/$phone/d" "$ab.txt"
+				echo ""
+				echo "'Contac deleted'"
+			else
+				echo "--> Contac not found.."
+			fi
+	else
+		echo "--> Book not found.."
+	fi
+}
+
+display(){
+	read -p "--> Enter book name : " ab
+	if [ -f "$ab.txt" ];then
+		echo "--> Book information : "
+		cat "$ab.txt"
+	else
+		echo "--> Book not found.."
+	fi
+}
+
+while [ 1 ];
+do
+	echo ""
+	echo "------ Menu ------"
+	echo "1.Create"
+	echo "2.Insert"
+	echo "3.Modify"
+	echo "4.Delete"
+	echo "5.Display"
+	echo "6.Exit"
+	
+	read -p "--> Enter your choice : " choice
+	
+	case $choice in
+		1)create ;;
+		2)insert ;;
+		3)modify ;;
+		4)delete ;;
+		5)display ;;
+		6)exit ;;
+		*)echo "Enter valid option"
+	esac
+	
+done
+
+<<
+aman@aman-Latitude-E5470:~$ ./addressbook.sh
+
+------ Menu ------
+1.Create
+2.Insert
+3.Modify
+4.Delete
+5.Display
+6.Exit
+--> Enter your choice : 1
+--> Enter book name : address
+--> Book create by name 'address'
+
+------ Menu ------
+1.Create
+2.Insert
+3.Modify
+4.Delete
+5.Display
+6.Exit
+--> Enter your choice : 2
+--> Enter book name : address
+--> Enter phonenumber : 1000
+--> Enter your name : Aman
+--> Enter your address : Pune
+ 
+--> Contac inserted..
+
+------ Menu ------
+1.Create
+2.Insert
+3.Modify
+4.Delete
+5.Display
+6.Exit
+--> Enter your choice : 2
+--> Enter book name : address
+--> Enter phonenumber : 1000
+--> Contac already exist
+
+------ Menu ------
+1.Create
+2.Insert
+3.Modify
+4.Delete
+5.Display
+6.Exit
+--> Enter your choice : 2       
+--> Enter book name : address
+--> Enter phonenumber : 1001
+--> Enter your name : Aditya
+--> Enter your address : Pune 
+ 
+'Contac inserted'
+
+------ Menu ------
+1.Create
+2.Insert
+3.Modify
+4.Delete
+5.Display
+6.Exit
+--> Enter your choice : 5
+--> Enter book name : address
+--> Book information : 
+ 
+[Name : Aman | Phone : 1000 | Address : Pune]
+ 
+[Name : Aditya | Phone : 1001 | Address : Pune]
+
+------ Menu ------
+1.Create
+2.Insert
+3.Modify
+4.Delete
+5.Display
+6.Exit
+--> Enter your choice : 3
+--> Enter book name : address
+--> Enter phonenumber : 1000
+--> Enter new-name : Ashfaq
+--> Enter new-phonenumber : 1000
+--> Enter new-address : Pune
+ 
+'Contac modified'
+
+------ Menu ------
+1.Create
+2.Insert
+3.Modify
+4.Delete
+5.Display
+6.Exit
+--> Enter your choice : 5
+--> Enter book name : address
+--> Book information : 
+ 
+[Name : Ashfaq | Phone : 1000 | Address : Pune]
+ 
+[Name : Aditya | Phone : 1001 | Address : Pune]
+
+------ Menu ------
+1.Create
+2.Insert
+3.Modify
+4.Delete
+5.Display
+6.Exit
+--> Enter your choice : 4
+--> Enter book name : address
+--> Enter phonenumber : 1000
+
+'Contac deleted'
+
+------ Menu ------
+1.Create
+2.Insert
+3.Modify
+4.Delete
+5.Display
+6.Exit
+--> Enter your choice : 5
+--> Enter book name : address
+--> Book information : 
+ 
+ 
+[Name : Aditya | Phone : 1001 | Address : Pune]
+
+------ Menu ------
+1.Create
+2.Insert
+3.Modify
+4.Delete
+5.Display
+6.Exit
+--> Enter your choice : 8
+Enter valid option
+
+------ Menu ------
+1.Create
+2.Insert
+3.Modify
+4.Delete
+5.Display
+6.Exit
+--> Enter your choice : 6
+aman@aman-Latitude-E5470:~$ 
+
+>>
+
+----------------------------------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------------------------------
+------------------------------------------|CPU Scheduling|-------------------------	------------------------
+---------------------------------------------------------------------------------------------------------------
+
+---------------------------> SJF <------------------------------
+
+#include<iostream>
+using namespace std;
+
+float num, temp, p[10], bt[10], wt[10], tat[10];
+float awt=0.0, atat=0.0;
+
+void calculation(){
+
+	for(int i=0; i<num-1; i++){
+		for(int j=0; j<num-1-i; j++){
+			if(bt[j]>bt[j+1]){
+			
+				temp = bt[j];
+				bt[j] = bt[j+1];
+				bt[j+1] = temp;
+				
+				temp = p[j];
+				p[j] = p[j+1];
+				p[j+1] = temp;
+				
+			}
+		}
+	}
+	
+	for(int i=0; i<num; i++){
+		wt[i]=0;
+		tat[i]=0;
+		for(int j=0; j<i; j++){
+			wt[i] = wt[i] + bt[j];
+		}
+		tat[i] = wt[i] + bt[i];
+	}
+	
+	for(int i=0; i<num; i++){
+		
+		awt = awt + wt[i];
+		atat = atat + tat[i];
+		
+	}	
+	awt = awt/num;
+	atat = atat/num;
+}
+
+void print(){
+
+	cout<<"\n------------------------------------------------------------------";
+	cout<<"\n| Process	|  Burst-time   | Waiting-time | Turnaround-time |";
+	cout<<"\n------------------------------------------------------------------";
+	cout<<endl;
+	for(int i=0; i<num; i++){
+		cout<<"|\t"<<p[i]<<"\t|\t"<<bt[i]<<"\t|\t"<<wt[i]<<"\t|\t"<<tat[i]<<"\t |"<<endl;
+	}
+	cout<<"------------------------------------------------------------------";
+	cout<<endl;
+	cout<<"Average waiting-time : "<<awt<<endl;
+	cout<<"Average turnaround-time : "<<atat<<endl;
+}
+
+int main(){
+
+	cout<<"Enter number of process : ";
+	cin>>num;
+	
+	cout<<"Enter process numbers : ";
+	for(int i=0; i<num; i++){
+		
+		cin>>p[i];
+	
+	}
+	
+	cout<<"Enter burst-times : ";
+	for(int i=0; i<num; i++){
+		
+		cin>>bt[i];
+	
+	}
+	
+	calculation();
+	print();
+
+	return 0;
+}
+/*
+------------------- output ----------------------------
+
+Enter number of process : 4
+Enter process numbers : 1 2 3 4
+Enter burst-times : 3 2 5 7
+
+------------------------------------------------------------------
+| Process	|  Burst-time   | Waiting-time | Turnaround-time |
+------------------------------------------------------------------
+|	2	|	2	|	0	|	2	 |
+|	1	|	3	|	2	|	5	 |
+|	3	|	5	|	5	|	10	 |
+|	4	|	7	|	10	|	17	 |
+------------------------------------------------------------------
+Average waiting-time : 4.25
+Average turnaround-time : 8.5
+
+--------------------- output 2 -----------------------------------
+
+Enter number of process : 4
+Enter process numbers : 1 2 3 4
+Enter burst-times : 5 3 4 1
+
+------------------------------------------------------------------
+| Process	|  Burst-time   | Waiting-time | Turnaround-time |
+------------------------------------------------------------------
+|	4	|	1	|	0	|	1	 |
+|	2	|	3	|	1	|	4	 |
+|	3	|	4	|	4	|	8	 |
+|	1	|	5	|	8	|	13	 |
+------------------------------------------------------------------
+Average waiting-time : 3.25
+Average turnaround-time : 6.5
+
+*/
+
+-----------------> RR: <--------------------
+
+#include<iostream>
+using namespace std;
+
+int main(){
+
+	int num;
+	cout<<"Enter number of process : ";
+	cin>>num;
+	
+	int qt;
+	cout<<"Enter quantum-time : ";
+	cin>>qt;
+	
+	int at[num], bt[num], rbt[num], wt[num], tat[num];
+	
+	for(int i=0; i<num; i++){
+		cout<<endl;
+		cout<<"Enter arrival-time p"<<i+1<<" : ";
+		cin>>at[i];
+		cout<<"Enter burst-time p"<<i+1<<" : ";
+		cin>>bt[i];
+		rbt[i] = bt[i];
+	}
+	cout<<endl;
+	
+	int current_time=0, completed=0;
+	while(completed < num){
+		for(int i=0; i<num; i++){
+			if(at[i] <= current_time && rbt[i] > 0){
+				if(rbt[i]<=qt){
+					current_time += rbt[i];
+					tat[i] = current_time - at[i];
+					wt[i] = tat[i] - bt[i];
+					rbt[i] = 0;
+					completed++;
+				}
+				else if(rbt[i] > qt){
+					current_time += qt;
+					rbt[i] = rbt[i] - qt;
+				}
+			}
+		}
+	}
+	double awt=0, atat=0;
+	cout<<"----------------------------------------------------------------------------------"<<endl;
+	cout<<"|\tP\t|\tAT\t|\tBT\t|\tWT\t|\tTAT\t|"<<endl;
+	cout<<"----------------------------------------------------------------------------------"<<endl;
+	for(int i=0; i<num; i++){
+		cout<<"|\t"<<i+1<<"\t|\t"<<at[i]<<"\t|\t"<<bt[i]<<"\t|\t"<<wt[i]<<"\t|\t"<<tat[i]<<"\t|"<<endl;
+		awt += wt[i];
+		atat += tat[i];
+	
+	}
+	cout<<endl;
+	cout<<"AWT : "<<awt/num<<endl;
+	cout<<"ATAT : "<<atat/num<<endl;
+	return 0;
+}
+/*
+Enter number of process : 4
+Enter quantum-time : 6
+
+Enter arrival-time p1 : 0
+Enter burst-time p1 : 8
+
+Enter arrival-time p2 : 1
+Enter burst-time p2 : 5
+
+Enter arrival-time p3 : 2
+Enter burst-time p3 : 10
+
+Enter arrival-time p4 : 3
+Enter burst-time p4 : 11
+
+----------------------------------------------------------------------------------
+|	P	|	AT	|	BT	|	WT	|	TAT	|
+----------------------------------------------------------------------------------
+|	1	|	0	|	8	|	17	|	25	|
+|	2	|	1	|	5	|	5	|	10	|
+|	3	|	2	|	10	|	17	|	27	|
+|	4	|	3	|	11	|	20	|	31	|
+
+AWT : 14.75
+ATAT : 23.25
+
+*/
+
+----------------------------------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------------------------------
+------------------------------------------|Bankers|----------------------------------------------------
+---------------------------------------------------------------------------------------------------------------
+
+#include<iostream>
+using namespace std;
+
+int num = 5;
+int res = 3;
+
+int alloc[5][3] = { 
+	{ 0, 1, 0 }, // P0 // Allocation Matrix
+	{ 2, 0, 0 }, // P1
+	{ 3, 0, 2 }, // P2
+	{ 2, 1, 1 }, // P3
+	{ 0, 0, 2 }  // p4
+}; 
+ 
+int max_mat[5][3] = { 
+	{ 7, 5, 3 }, // P0 // max Matrix
+	{ 3, 2, 2 }, // P1
+	{ 9, 0, 2 }, // P2
+	{ 2, 2, 2 }, // P3
+	{ 4, 3, 3 }  // p4
+}; 
+ 
+int avail[3] = { 3, 3, 2 }; 
+
+int rem[5][3] = {
+	{0, 0, 0},
+	{0, 0, 0},
+	{0, 0, 0},
+	{0, 0, 0},
+	{0, 0, 0}
+};
+
+void remaining(){
+	
+	for(int i=0; i<num; i++){
+		for(int j=0; j<res; j++){
+			rem[i][j] = max_mat[i][j] - alloc[i][j];
+		}
+	}
+	
+}
+
+int finish[5];
+int ans[5];
+int pindex;
+void available(){
+	for(int k=0; k<num; k++){
+		for(int i=0; i<num; i++){
+			if(finish[i]==0){
+				int flag=0;
+				for(int j=0; j<res; j++){
+					if(rem[i][j]>avail[j]){
+						flag = 1;
+						break;
+					}
+				}
+				if(flag==0){
+					ans[pindex++] = i;
+					for(int j=0; j<res; j++){
+						avail[j] = avail[j] + alloc[i][j];
+					}
+					finish[i]=1;
+				}
+			}
+		}
+	}
+}
+
+void print(){
+	cout<<"----------------------------------------------------"<<endl;
+	cout<<"| process | Allocated | Max_Matrix | Remaining_Mat |"<<endl;
+	cout<<"----------------------------------------------------"<<endl;
+	for(int i=0; i<num; i++){
+		cout<<"| P - "<<i<<"   | ";
+		for(int j=0; j<res; j++){
+			cout<<alloc[i][j]<<" "; 
+		}
+		cout<<"    |   ";
+		for(int j=0; j<res; j++){
+			cout<<max_mat[i][j]<<" "; 
+		}
+		cout<<"   |   ";
+		for(int j=0; j<res; j++){
+			cout<<rem[i][j]<<" "; 
+		}
+		cout<<"      |   ";
+		cout<<endl;
+	}
+	cout<<"----------------------------------------------------"<<endl;
+
+	cout<<"\tSafe Sequence : ";
+	for(int i=0; i<num; i++){
+		cout<<"p"<<ans[i];
+		if(i!=4){
+			cout<<" -> ";
+		}
+	}
+	cout<<endl;
+}
+
+int main(){
+	remaining();
+	available();
+	print();
+	return 0;
+}
+
+/*
+-------- output -----------
+----------------------------------------------------
+| process | Allocated | Max_Matrix | Remaining_Mat |
+----------------------------------------------------
+| P - 0   | 0 1 0     |   7 5 3    |   7 4 3       |   
+| P - 1   | 2 0 0     |   3 2 2    |   1 2 2       |   
+| P - 2   | 3 0 2     |   9 0 2    |   6 0 0       |   
+| P - 3   | 2 1 1     |   2 2 2    |   0 1 1       |   
+| P - 4   | 0 0 2     |   4 3 3    |   4 3 1       |   
+----------------------------------------------------
+	Safe Sequence : p1 -> p3 -> p4 -> p0 -> p2
+
+*/
+
+----------------------------------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------------------------------
+------------------------------------------|Reader-Writer|----------------------------------------------------
+---------------------------------------------------------------------------------------------------------------
+
+#include<stdio.h>
+#include<stdlib.h>
+#include<unistd.h>
+#include<semaphore.h>
+#include<pthread.h>
+
+	sem_t write_semaphore;
+	sem_t read_semaphore;
+	
+	int rd_count = 0;
+	
+	void * WriteFunction(void *arg){
+	
+		sem_wait(&write_semaphore);
+			printf("Writer is performing writing operation %ld\n",pthread_self());
+		sem_post(&write_semaphore);
+	
+	}
+	
+	void * ReadFunction(void *arg){
+		sem_wait(&read_semaphore);
+			rd_count++;
+			if(rd_count==1){
+				sem_wait(&write_semaphore);
+			}
+		sem_post(&read_semaphore);
+		printf("Reader is performing reading operation %ld\n",pthread_self());
+		sem_wait(&read_semaphore);
+			rd_count--;
+			if(rd_count==0){
+				sem_post(&write_semaphore);
+			}
+		sem_post(&read_semaphore);
+	}
+
+int main(){
+
+	sem_init(&write_semaphore,0,1);
+	sem_init(&read_semaphore,0,1);
+	
+	pthread_t writer_thread[3], reader_thread[3];
+	
+	for(int i=0; i<3; i++){
+	
+		pthread_create(&writer_thread[i],NULL,WriteFunction,NULL);
+		sleep(1);
+	
+	}
+	
+	for(int i=0; i<3; i++){
+	
+		pthread_create(&reader_thread[i],NULL,ReadFunction,NULL);
+		sleep(1);
+	}	
+	
+	for(int i=0; i<3; i++){
+	
+		pthread_join(writer_thread[i],NULL);
+		pthread_join(reader_thread[i],NULL);
+	
+	}
+
+	return 0;
+}
+
+----------------- output ------------------
+window@window-virtual-machine:~$ ./RW.out
+Writer is doing writing operation 139912252749376
+Writer is doing writing operation 139912244356672
+Writer is doing writing operation 139912235963968
+Reader is performing reading operation 139912227571264
+Reader is performing reading operation 139912219178560
+Reader is performing reading operation 139912210785856
+
+window@window-virtual-machine:~$ gcc RW.c -o RW.out
+window@window-virtual-machine:~$ ./RW.out
+Writer is doing writing operation 140280867059264
+Writer is doing writing operation 140280858666560
+Writer is doing writing operation 140280850273856
+Reader is performing reading operation 140280841881152
+Reader is performing reading operation 140280833488448
+Reader is performing reading operation 140280825095744
+
+----------------------------------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------------------------------
+---------------------------------------|ProducerConsumer|----------------------------------------------------
+---------------------------------------------------------------------------------------------------------------
+
+#include <stdio.h>
+#include <semaphore.h>
+#include <pthread.h>
+#include <sys/types.h>
+#include <unistd.h>
+
+#define BUFFER_SIZE 5
+#define NUM_ITEMS 5
+
+int in = 0, out = 0;
+sem_t full, empty;
+int buffer[BUFFER_SIZE];
+int itemsProduced = 0;
+int itemsConsumed = 0;
+
+void *producerFunction(void *arg) {
+    while (itemsProduced < NUM_ITEMS) {
+        sem_wait(&empty);
+
+        int item = rand() % 100;
+
+        if (in == out) {
+            sem_wait(&empty);
+        }
+
+        buffer[in] = item;
+        in = (in + 1) % BUFFER_SIZE;
+        sem_post(&full);
+
+        printf("Producer with ID(%ld) produced item(%d)\n", pthread_self(), item);
+
+        itemsProduced++;
+    }
+}
+
+void *consumerFunction(void *arg) {
+    while (itemsConsumed < NUM_ITEMS) {
+        sem_wait(&full);
+
+        if (in == out) {
+            sem_post(&full);
+        }
+
+        int item = buffer[out];
+        out = (out + 1) % BUFFER_SIZE;
+        sem_post(&empty);
+
+        printf("Consumer with ID(%ld) consume item(%d)\n", pthread_self(), item);
+
+        itemsConsumed++;
+        sleep(5);	
+    }
+}
+
+int main() {
+    sem_init(&empty, 0, BUFFER_SIZE);
+    sem_init(&full, 0, 0);
+
+    pthread_t producer_thread[3], consumer_thread[3];
+
+    for (int i = 0; i < 3; i++) {
+        pthread_create(&producer_thread[i], NULL, producerFunction, NULL);
+    }
+
+    for (int i = 0; i < 3; i++) {
+        pthread_create(&consumer_thread[i], NULL, consumerFunction, NULL);
+    }
+
+    for (int i = 0; i < 3; i++) {
+        pthread_join(producer_thread[i], NULL);
+        pthread_join(consumer_thread[i], NULL);
+    }
+
+    return 0;
+}
+/*
+aman@aman-Latitude-E5470:~$ ./p1.out
+Producer with ID(140268584040000) produced item(83)
+Producer with ID(140268584040000) produced item(86)
+Producer with ID(140268584040000) produced item(77)
+Producer with ID(140268584040000) produced item(15)
+Consumer with ID(140268558861888) consume item(83)
+Producer with ID(140268584040000) produced item(93)
+Consumer with ID(140268550469184) consume item(86)
+Producer with ID(140268575647296) produced item(35)
+Consumer with ID(140268542076480) consume item(77)
+Producer with ID(140268567254592) produced item(86)
+Consumer with ID(140268558861888) consume item(15)
+Consumer with ID(140268550469184) consume item(93)
+*/
+
+----------------------------------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------------------------------
+---------------------------------------|FIFO PIPES|----------------------------------------------------
+---------------------------------------------------------------------------------------------------------------
+
+------------------------> p1_writer <------------------------------------
+
+#include<stdio.h>
+#include<string.h>
+#include<fcntl.h>
+#include<sys/stat.h>
+#include<sys/types.h>
+#include<unistd.h>
+
+int main(){
+
+	int fd;
+	
+	char * myfifo = "/tmp/myfifo";
+	
+	mkfifo(myfifo, 0666);
+	
+	char sentence[1000], received[1000];
+	
+	while(1){
+	
+		fd = open(myfifo, O_WRONLY);
+		printf("\nUser : ");
+		fgets(sentence, sizeof(sentence), stdin);
+		write(fd, sentence, strlen(sentence)+1);
+		close(fd);
+		
+		fd = open(myfifo, O_RDONLY);
+		read(fd, received, sizeof(received));
+		printf("Message info : %s\n",received);
+		
+	}
+
+	return 0;
+}
+
+/*
+
+------------------- output -------------------------
+
+aman@aman-Latitude-E5470:~$ gcc writer.c -o writer.out
+aman@aman-Latitude-E5470:~$ ./writer.out
+
+User : HI Aman
+Message info : word : 1  ,line : 1  ,character : 6  
+
+User : how are you ?
+Message info : word : 3  ,line : 1  ,character : 10  
+
+User : Iam fine
+Message info : word : 1  ,line : 1  ,character : 7  
+
+User : Goodbye :)
+Message info : word : 1  ,line : 1  ,character : 9 
+
+*/
+
+----------------------------> p2_reader <-----------------------------
+
+#include<stdio.h>
+#include<string.h>
+#include<fcntl.h>
+#include<sys/stat.h>
+#include<sys/types.h>
+#include<unistd.h>
+
+int main(){
+
+	int fd;
+	
+	char * myfifo = "/tmp/myfifo";
+	
+	mkfifo(myfifo, 0666);
+	
+	char sentence[1000], output[1000];
+	
+	while(1){
+	
+	fd = open(myfifo, O_RDONLY);
+	read(fd, sentence, sizeof(sentence));
+	printf("Data : %s\n",sentence);
+	close(fd);
+	
+	int word=0, line=0, character=0;
+	for(int i=0; i<strlen(sentence); i++)
+		if(sentence[i]==' '||sentence[i]=='\t'){
+			word++;
+		}
+		else if(sentence[i]=='\n'){
+			line++;
+		}
+		else{
+			character++;
+		}
+		
+		sprintf(output,"word : %d  ,line : %d  ,character : %d  ",word, line, character);
+	
+		FILE * outputfile = fopen("output.txt","w");
+		fprintf(outputfile,"%s",output);
+		fclose(outputfile);
+
+		fd = open(myfifo, O_WRONLY);
+		fopen("output.txt","r");
+		fgets(output, sizeof(output), outputfile);
+		write(fd, output, strlen(output)+1);
+		fclose(outputfile);
+		close(fd);
+		
+	}	
+
+	return 0;
+}
+
+/*
+--------------- output --------------
+
+aman@aman-Latitude-E5470:~$ gcc reader.c -o reader.out
+aman@aman-Latitude-E5470:~$ ./reader.out
+Data : HI Aman
+
+Data : how are you ?
+
+Data : Iam fine
+
+Data : Goodbye :)
+
+*/
+
+----------------------------------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------------------------------
+------------------------------------------|Shared Memory|----------------------------------------------------
+---------------------------------------------------------------------------------------------------------------
+
+
+------------------------> writer <--------------------------
+#include<stdio.h>
+#include<sys/ipc.h>
+#include<sys/shm.h>
+
+struct shm{
+	
+	char buffer[1000];
+	int flag;	
+	
+};
+
+int main(){
+
+	key_t key = ftok("shmfile",'A'); // A or 65
+
+	int shmid = shmget(key, sizeof(struct shm), 0666 | IPC_CREAT);
+	
+	struct shm *str = (struct shm*) shmat(shmid,(void*)0,0);
+	
+	str->flag=0;
+	
+	printf("write data : ");
+	
+	gets(str->buffer);
+	
+	str->flag=1;
+	
+	while(str->flag!=0){
+		printf("waiting....\n");
+		sleep(1);
+	}
+	
+	printf("data has been read..%s",str->buffer);
+	
+	shmdt(str);
+
+	return 0;
+
+}
+
+--------------------------> reader <-----------------------------------
+#include<stdio.h>
+#include<sys/ipc.h>
+#include<sys/shm.h>
+
+struct shm{
+	
+	char buffer[1000];
+	int flag;	
+	
+};
+
+int main(){
+
+	key_t key = ftok("shmfile",'A'); // A or 65
+
+	int shmid = shmget(key, sizeof(struct shm), 0666 | IPC_CREAT);
+	
+	struct shm *str = (struct shm*) shmat(shmid,(void*)0,0);
+	
+	while(str->flag==0){
+		printf("writing....\n");
+		sleep(1);
+	}
+	
+	printf("read data : %s\n",str->buffer);
+	
+	str->flag=0;
+	
+	shmdt(str);
+
+	return 0;
+
+}
+
+----------------------------------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------------------------------
+--------------------------------------|Page Replacement|----------------------------------------------------
+---------------------------------------------------------------------------------------------------------------
+
+CODE >>
+
+#include<stdio.h>
+#include<stdlib.h>
+
+void printFrames(int frames[], int frameSize) {
+    for (int i = 0; i < frameSize; ++i) {
+        if (frames[i] == -1) {
+            printf("X ");
+        } else {
+            printf("%d ", frames[i]);
+        }
+    }
+    printf("\n");
+}
+
+void FCFS(int pages[], int frameSize, int n) {
+    int frames[frameSize];
+    int counter = 0;
+    int pageFaults = 0;
+
+    for (int i = 0; i < frameSize; ++i) {
+        frames[i] = -1;
+    }
+
+    for (int i = 0; i < n; ++i) {
+        int pageExists = 0;
+        for (int j = 0; j < frameSize; ++j) {
+            if (frames[j] == pages[i]) {
+                pageExists = 1;
+                break;
+            }
+        }
+
+        if (pageExists == 0) {
+            frames[counter] = pages[i];
+            ++counter;
+            ++pageFaults;
+            if (counter >= frameSize) {
+                counter = 0;
+            }
+        }
+        printf("Frames (FCFS): ");
+        printFrames(frames, frameSize);
+    }
+
+    printf("Number of page faults using FCFS: %d\n\n", pageFaults);
+}
+
+void LRU(int pages[], int frameSize, int n) {
+    int frames[frameSize];
+    int counter = 0;
+    int pageFaults = 0;
+    int recent[frameSize] = {-1, -1, -1};
+
+    for (int i = 0; i < frameSize; ++i) {
+        frames[i] = -1;
+    }
+
+    for (int i = 0; i < n; ++i) {
+        int pageExists = 0;
+        for (int j = 0; j < frameSize; ++j) {
+            if (frames[j] == pages[i]) {
+                pageExists = 1;
+                recent[j] = i;
+                break;
+            }
+        }
+
+        if (pageExists == 0) {
+            int leastRecentIndex = 0;
+            for (int j = 1; j < frameSize; ++j) {
+                if (recent[j] < recent[leastRecentIndex]) {
+                    leastRecentIndex = j;
+                }
+            }
+            frames[leastRecentIndex] = pages[i];
+            recent[leastRecentIndex] = i;
+            ++pageFaults;
+        }
+        printf("Frames (LRU): ");
+        printFrames(frames, frameSize);
+    }
+
+    printf("Number of page faults using LRU: %d\n\n", pageFaults);
+}
+
+void Optimal(int pages[], int frameSize,int n) {
+    int frames[frameSize];
+    int pageFaults = 0;
+
+    for (int i = 0; i < frameSize; ++i) {
+        frames[i] = -1;
+    }
+
+    for (int i = 0; i < n; ++i) {
+        int pageExists = 0;
+        for (int j = 0; j < frameSize; ++j) {
+            if (frames[j] == pages[i]) {
+                pageExists = 1;
+                break;
+            }
+        }
+
+        if (pageExists == 0) {
+            int maxDistance = -1;
+            int replaceIndex = -1;
+            for (int j = 0; j < frameSize; ++j) {
+                int futureIndex = 0;
+                for (int k = i + 1; k < 20; ++k) {
+                    if (frames[j] == pages[k]) {
+                        futureIndex = k;
+                        break;
+                    }
+                }
+                if (futureIndex == 0) {
+                    replaceIndex = j;
+                    break;
+                } else {
+                    if (futureIndex > maxDistance) {
+                        maxDistance = futureIndex;
+                        replaceIndex = j;
+                    }
+                }
+            }
+            frames[replaceIndex] = pages[i];
+            ++pageFaults;
+        }
+        printf("Frames (Optimal): ");
+        printFrames(frames, frameSize);
+    }
+
+    printf("Number of page faults using Optimal: %d\n\n", pageFaults);
+}
+
+int main() {
+    int pages[20];
+    int n;
+    printf("Enter the size of string \n");
+    scanf("%d",&n);
+    printf("Enter the reference string:\n");
+    for (int i = 0; i < n; ++i) {
+        scanf("%d", &pages[i]);
+    }
+
+    int frameSize = 3;
+
+    FCFS(pages, frameSize,n);
+    LRU(pages, frameSize,n);
+    Optimal(pages, frameSize,n);
+
+    return 0;
+}
+
+
+OUTPUT >>
+
+Enter the size of string 
+12
+Enter the reference string:5 6 7 8 5 6 9 5 6 7 8 9
+Frames (FCFS): 5 X X
+Frames (FCFS): 5 6 X
+Frames (FCFS): 5 6 7
+Frames (FCFS): 8 6 7
+Frames (FCFS): 8 5 7
+Frames (FCFS): 8 5 6
+Frames (FCFS): 9 5 6
+Frames (FCFS): 9 5 6
+Frames (FCFS): 9 5 6
+Frames (FCFS): 9 7 6
+Frames (FCFS): 9 7 8
+Frames (FCFS): 9 7 8
+Number of page faults using FCFS: 9
+
+Frames (LRU): 5 X X
+Frames (LRU): 5 6 X
+Frames (LRU): 5 6 7
+Frames (LRU): 8 6 7
+Frames (LRU): 8 5 7
+Frames (LRU): 8 5 6
+Frames (LRU): 9 5 6
+Frames (LRU): 9 5 6
+Frames (LRU): 9 5 6
+Frames (LRU): 7 5 6
+Frames (LRU): 7 8 6
+Frames (LRU): 7 8 9 
+Number of page faults using LRU: 10
+
+Frames (Optimal): 5 X X
+Frames (Optimal): 5 6 X
+Frames (Optimal): 5 6 7
+Frames (Optimal): 5 6 8
+Frames (Optimal): 5 6 8
+Frames (Optimal): 5 6 8
+Frames (Optimal): 5 6 9
+Frames (Optimal): 5 6 9
+Frames (Optimal): 5 6 9
+Frames (Optimal): 5 7 9
+Frames (Optimal): 5 8 9
+Frames (Optimal): 5 8 9
+Number of page faults using Optimal: 7
+
+
+----------------------------------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------------------------------
+----------------------------------------|Disk Scheduling|----------------------------------------------------
+---------------------------------------------------------------------------------------------------------------
+
+CODE >>
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+#include <limits.h>
+
+void shortestSeekTimeFirst(int request[], int head, int n) 
+{
+    int seek_sequence[n];
+    int seek_count = 0;
+    bool visited[n];
+
+    for (int i = 0; i < n; i++) 
+    {
+        visited[i] = false;
+    }
+
+    for (int i = 0; i < n; i++) 
+    {
+        int min_distance = INT_MAX;
+        int index = -1;
+        for (int j = 0; j < n; j++) 
+        {
+            if (!visited[j] && abs(head - request[j]) < min_distance) 
+            {
+                index = j;
+                min_distance = abs(head - request[j]);
+            }
+        }
+        visited[index] = true;
+        seek_sequence[i] = request[index];
+        seek_count += min_distance;
+        head = request[index];
+    }
+
+    printf("SSTF Disk Scheduling Algorithm:\n");
+    printf("Total seek time: %d\n", seek_count);
+    printf("Seek sequence: ");
+    for (int i = 0; i < n; i++) 
+    {
+        printf("%d ", seek_sequence[i]);
+    }
+    printf("\n\n");
+}
+
+void scan(int request[], int head, int n, int direction, int disk_size) 
+{
+    int seek_sequence[n + 1];
+    int seek_count = 0;
+    int distance;
+    int cur_track;
+
+    for (int i = 0; i < n; i++) 
+    {
+        for (int j = i + 1; j < n; j++) 
+        {
+            if (request[i] > request[j]) 
+            {
+                int temp = request[i];
+                request[i] = request[j];
+                request[j] = temp;
+            }
+        }
+    }
+
+    int index;
+    for (index = 0; index < n; index++) 
+    {
+        if (head < request[index]) 
+        {
+            break;
+        }
+    }
+
+    int left = index - 1;
+    int right = index;
+
+    int seek_sequence_index = 0;
+
+    // Handle right direction
+    if(direction==1)
+    {
+        while (right < n) 
+        {
+            cur_track = request[right];
+            distance = abs(cur_track - head);
+            seek_count += distance;
+            seek_sequence[seek_sequence_index++] = cur_track;
+            head = cur_track;
+            right++;
+        }
+
+        cur_track = disk_size-1;
+        distance = abs(cur_track - head);
+        seek_count += distance;
+        seek_sequence[seek_sequence_index++] = cur_track;
+        head = cur_track;
+
+        while (left >= 0) 
+        {
+            cur_track = request[left];
+            distance = abs(cur_track - head);
+            seek_count += distance;
+            seek_sequence[seek_sequence_index++] = cur_track;
+            head = cur_track;
+            left--;
+        }
+    }
+    else if(direction==0)
+    {
+        while (left >= 0) 
+        {
+            cur_track = request[left];
+            distance = abs(cur_track - head);
+            seek_count += distance;
+            seek_sequence[seek_sequence_index++] = cur_track;
+            head = cur_track;
+            left--;
+        }
+
+        cur_track = 0;
+        distance = abs(cur_track - head);
+        seek_count += distance;
+        seek_sequence[seek_sequence_index++] = cur_track;
+        head = cur_track;
+
+        while (right < n) 
+        {
+            cur_track = request[right];
+            distance = abs(cur_track - head);
+            seek_count += distance;
+            seek_sequence[seek_sequence_index++] = cur_track;
+            head = cur_track;
+            right++;
+        }
+    }
+
+    printf("SCAN Disk Scheduling Algorithm:\n");
+    printf("Total seek time: %d\n", seek_count);
+    printf("Seek sequence: ");
+    for (int i = 0; i <= n; i++) 
+    {
+        printf("%d ", seek_sequence[i]);
+    }
+    printf("\n\n");
+}
+
+void cLook(int request[], int head, int n, int direction, int disk_size) 
+{
+    int seek_sequence[n];
+    int seek_count = 0;
+    int distance;
+    int cur_track;
+
+    for (int i = 0; i < n - 1; i++) 
+    {
+        for (int j = i + 1; j < n; j++) 
+        {
+            if (request[i] > request[j]) 
+            {
+                int temp = request[i];
+                request[i] = request[j];
+                request[j] = temp;
+            }
+        }
+    }
+
+    int index;
+    for (index = 0; index < n; index++) 
+    {
+        if (head < request[index]) 
+        {
+            break;
+        }
+    }
+
+    int left = index-1;
+    int right = index;
+
+    for (int i = 0; i < n; i++) 
+    {
+        if (direction == 0) 
+        {
+            if (left <= 0) 
+            {
+                cur_track = request[0];
+                left = n-1;
+            }
+            else
+            {
+                cur_track = request[left];
+                left--;
+            }
+        } 
+        else if(direction == 1)
+        {
+            cur_track = request[right];
+            right = (right + 1) % n;
+        }
+        distance = abs(cur_track - head);
+        seek_sequence[i] = cur_track;
+        head = cur_track;
+        seek_count += distance;
+    }
+
+    printf("C-LOOK Disk Scheduling Algorithm:\n");
+    printf("Total seek time: %d\n", seek_count);
+    printf("Seek sequence: ");
+    for (int i = 0; i < n; i++) 
+    {
+        printf("%d ", seek_sequence[i]);
+    }
+    printf("\n\n");
+}
+
+int main() 
+{
+    int n, head, direction;
+    int disk_size = 200;
+    printf("Enter the number of requests: ");
+    scanf("%d", &n);
+    printf("Enter the Disk Size : ");
+    scanf("%d",&disk_size);
+    int proc[n];
+    printf("Enter the requests: ");
+    for(int i = 0; i < n; i++) 
+    {
+        scanf("%d", &proc[i]);
+    }
+    printf("Enter the initial head position: ");
+    scanf("%d", &head);
+    printf("Enter the direction (0 for left, 1 for right): ");
+    scanf("%d", &direction);
+
+    for (int i = 0; i < n - 1; i++) 
+    {
+        for (int j = i + 1; j < n; j++) 
+        {
+            if (proc[i] > proc[j]) 
+            {
+                int temp = proc[i];
+                proc[i] = proc[j];
+                proc[j] = temp;
+            }
+        }
+    }
+
+    shortestSeekTimeFirst(proc, head, n);
+    scan(proc, head, n, direction, disk_size);
+    cLook(proc, head, n, direction, disk_size);
+
+    return 0;
+}
+
+
+OUTPUT >> 
+Enter the number of requests: 7
+Enter the Disk Size : 200
+Enter the requests: 82 170 43 140 24 16 190
+Enter the initial head position: 50
+Enter the direction (0 for left, 1 for right): 1
+
+SSTF Disk Scheduling Algorithm:
+Total seek time: 208
+Seek sequence: 43 24 16 82 140 170 190
+
+SCAN Disk Scheduling Algorithm:
+Total seek time: 332
+Seek sequence: 82 140 170 190 199 43 24 16
+
+C-LOOK Disk Scheduling Algorithm:
+Total seek time: 341
+Seek sequence: 82 140 170 190 16 24 43
+
+PS P:\VsCode> 
+
+
